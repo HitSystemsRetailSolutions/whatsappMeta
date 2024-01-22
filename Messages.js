@@ -10,16 +10,14 @@ class Messages {
   addMessage(phone, message) {
     return new Promise((resolve, reject) => {
       const date = new Date();
-      const sql = `INSERT INTO WatsappBotState values (${date.getTime()}, '${phone}', '${
-        process.env.WA_PHONE_NUMBER_ID
-      }', 'user_message', NULL, '${message}');`;
+      const sql = `INSERT INTO WatsappBotState values (GETDATE(), '${phone}', '${process.env.WA_PHONE_NUMBER_ID}', 'user_message', NULL, '${message}');`;
 
       recHit("fac_iterum", sql)
         .then(() => {
           resolve();
         })
-        .catch(() => {
-          reject();
+        .catch((e) => {
+          reject(e);
         });
     });
   }
@@ -27,15 +25,9 @@ class Messages {
   // Método para agregar una respuesta del asistente
   addRespone(phone, message) {
     return new Promise((resolve, reject) => {
-      this.messages[phone].push({ role: "assistant", content: message });
-      if (this.messages[phone].length > 100) {
-        this.messages[phone] = this.messages[phone].slice(-100);
-      }
       // Actualizar el archivo de respaldo
       const date = new Date();
-      const sql = `INSERT INTO WatsappBotState values (${date.getTime()}, '${
-        process.env.WA_PHONE_NUMBER_ID
-      }', '${phone}', 'bot_message', NULL, '${message}');`;
+      const sql = `INSERT INTO WatsappBotState values (GETDATE(), '${process.env.WA_PHONE_NUMBER_ID}', '${phone}', 'bot_message', NULL, '${message}');`;
 
       recHit("fac_iterum", sql)
         .then(() => {
@@ -50,7 +42,7 @@ class Messages {
   // Método para obtener los mensajes de un número de teléfono
   getMessages(phone) {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT TOP 100 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY timestamp DESC;`;
+      const sql = `SELECT TOP 100 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY tmst DESC;`;
       recHit("fac_iterum", sql)
         .then((result) => {
           const resultado = result.recordset.map((element) => {
@@ -61,8 +53,8 @@ class Messages {
           });
           resolve(resultado.reverse());
         })
-        .catch(() => {
-          reject();
+        .catch((e) => {
+          reject(e);
         });
     });
   }
@@ -70,7 +62,7 @@ class Messages {
   // Método para obtener el último mensaje de un número de teléfono
   getLastMessage(phone) {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT TOP 1 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY timestamp DESC;`;
+      const sql = `SELECT TOP 1 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY tmst DESC;`;
       recHit("fac_iterum", sql)
         .then((result) => {
           const resultado = result.recordset.map((element) => {
@@ -90,7 +82,7 @@ class Messages {
   // Método para obtener el segundo último mensaje de un número de teléfono
   getSecondLastMessage(phone) {
     return new Promise((resolve, reject) => {
-      const sql = `SELECT TOP 2 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY timestamp DESC;`;
+      const sql = `SELECT TOP 2 * FROM WatsappBotState WHERE Origen = '${phone}' OR Desti = '${phone}' ORDER BY tmst DESC;`;
       recHit("fac_iterum", sql)
         .then((result) => {
           const resultado = result.recordset.map((element) => {

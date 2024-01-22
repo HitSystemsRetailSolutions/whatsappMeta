@@ -31,8 +31,6 @@ let numCount = 0;
 
 const getResponse = async (msg, num) => {
   let chatCompletion = null;
-  const contact = messages.contactInfo[num];
-  const orderHistory = messages.orderHistory[num];
   let extra = "";
   /*  
     ? `\nYou are talking to ${contact.name}, he lives in the address ${contact.address}. Remember it when you make the order. But ALWAYS aks him to confirm his direction, it's very important`
@@ -227,10 +225,6 @@ const getResponse = async (msg, num) => {
     console.log(func.arguments);
     const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Obrador_117_Tot', '${ticket} ', getdate());`;
     // recHit("fac_carne", sql);
-    messages.contactInfo[num] = {
-      name: argumentos.client.name,
-      address: argumentos.client.address,
-    };
 
     // guardo los 2 ultimos pedidos
     /*
@@ -250,6 +244,7 @@ const getResponse = async (msg, num) => {
 
   // recoje la respuesta del gpt y la devuelve al usuario
   let response = chatCompletion.choices[0].message.content;
+  messages.deleteMessages(num);
   return `${response}`;
 };
 
@@ -280,12 +275,13 @@ async function handleNewMsg(msg) {
               bot.sendTextMessage(mensaje, msg.from);
             })
             .catch((e) => {
+              console.log(e);
               mensaje = "error comunicando con el gpt";
               bot.sendTextMessage(mensaje, msg.from);
             });
         })
         .catch((e) => {
-          console.log("error al recuperar los mensajes del usuario");
+          console.log(e);
         });
     })
     .catch((e) => {
