@@ -256,26 +256,29 @@ const getResponse = async (msg, num) => {
 const bot = new Bot(handleNewMsg);
 
 async function handleNewMsg(msg) {
-  messages.addMessage(msg.from, msg.text.body);
-
-  // obtiene la respuesta del gpt
-  let mensaje = "";
-  try {
-    mensaje = await getResponse(messages.getMessages(msg.from), msg.from);
-  } catch (e) {
-    console.log(e);
-    mensaje = "error comunicando con el gpt";
-  }
-
-  if (mensaje.includes("Confirmación de impresión del ticket")) {
-    // Borra los mensajes una vez que el ticket ha sido impreso
-    messages.deleteMessages(msg.from);
-  } else {
-    // Si no se ha impreso el ticket, añade la respuesta al registro
-    messages.addRespone(msg.from, mensaje);
-  }
-
-  // envia el mensaje
-  bot.sendTextMessage(mensaje, msg.from);
-  console.log(msg);
+  // añade el mensaje al registro
+  messages.addMessage(msg.from, msg.text.body).then(() => {
+    // obtiene la respuesta del gpt
+    let mensaje = "";
+    messages.getMessages(msg.from).then((mensajes) => {
+      getResponse(mensajes, msg.from)
+        .then((respuesta) => {
+          mensaje = respuesta;
+          // envia el mensaje
+          if (mensaje.includes("Confirmación de impresión del ticket")) {
+            // Borra los mensajes una vez que el ticket ha sido impreso
+            messages.deleteMessages(msg.from);
+          } else {
+            // Si no se ha impreso el ticket, añade la respuesta al registro
+            messages.addRespone(msg.from, mensaje);
+          }
+          // envia el mensaje
+          bot.sendTextMessage(mensaje, msg.from);
+        })
+        .catch((e) => {
+          mensaje = "error comunicando con el gpt";
+          bot.sendTextMessage(mensaje, msg.from);
+        });
+    });
+  });
 }
