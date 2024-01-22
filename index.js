@@ -1,4 +1,4 @@
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const { Bot } = require("./Bot.js");
 const { OpenAI } = require("openai");
 const messages = require("./Messages");
@@ -257,28 +257,38 @@ const bot = new Bot(handleNewMsg);
 
 async function handleNewMsg(msg) {
   // añade el mensaje al registro
-  messages.addMessage(msg.from, msg.text.body).then(() => {
-    // obtiene la respuesta del gpt
-    let mensaje = "";
-    messages.getMessages(msg.from).then((mensajes) => {
-      getResponse(mensajes, msg.from)
-        .then((respuesta) => {
-          mensaje = respuesta;
-          // envia el mensaje
-          if (mensaje.includes("Confirmación de impresión del ticket")) {
-            // Borra los mensajes una vez que el ticket ha sido impreso
-            messages.deleteMessages(msg.from);
-          } else {
-            // Si no se ha impreso el ticket, añade la respuesta al registro
-            messages.addRespone(msg.from, mensaje);
-          }
-          // envia el mensaje
-          bot.sendTextMessage(mensaje, msg.from);
+  messages
+    .addMessage(msg.from, msg.text.body)
+    .then(() => {
+      // obtiene la respuesta del gpt
+      let mensaje = "";
+      messages
+        .getMessages(msg.from)
+        .then((mensajes) => {
+          getResponse(mensajes, msg.from)
+            .then((respuesta) => {
+              mensaje = respuesta;
+              // envia el mensaje
+              if (mensaje.includes("Confirmación de impresión del ticket")) {
+                // Borra los mensajes una vez que el ticket ha sido impreso
+                messages.deleteMessages(msg.from);
+              } else {
+                // Si no se ha impreso el ticket, añade la respuesta al registro
+                messages.addRespone(msg.from, mensaje);
+              }
+              // envia el mensaje
+              bot.sendTextMessage(mensaje, msg.from);
+            })
+            .catch((e) => {
+              mensaje = "error comunicando con el gpt";
+              bot.sendTextMessage(mensaje, msg.from);
+            });
         })
         .catch((e) => {
-          mensaje = "error comunicando con el gpt";
-          bot.sendTextMessage(mensaje, msg.from);
+          console.log("error al recuperar los mensajes del usuario");
         });
+    })
+    .catch((e) => {
+      console.log(e);
     });
-  });
 }
