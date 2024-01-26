@@ -39,7 +39,8 @@ const getResponse = async (msg, num) => {
       "[LA HORA QUE ES]",
       new Date().toLocaleTimeString()
     );
-    console.log(sysprompt);
+
+    console.log({ num: msg });
 
     chatCompletion = await openai.chat.completions
       .create({

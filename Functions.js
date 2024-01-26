@@ -15,7 +15,7 @@ class Functions {
         : argumentos.client.postalCode === "08320"
         ? "M"
         : "T"
-    }-${++numCount}[negative: off][magnify: width 1; height 1][bold: off]
+    }-${++this.numCount}[negative: off][magnify: width 1; height 1][bold: off]
     GONDAL ISTAMBUL
     C/SEVILLA 5 (08320) EL MASNOU
     619369404
