@@ -51,6 +51,16 @@ class Functions {
     // const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Obrador_117_Tot', '${ticket} ', getdate());`;
     // recHit("fac_carne", sql);
 
+    // Añadimos pedido a la base de datos
+    let pedidoString = argumentos.items
+      .map((item) => item.name)
+      .join(", ")
+      .slice(0, -2);
+
+    const sqlFicha = `INSERT INTO WatsappBotState VALUES (GETDATE(), '${num}', '${process.env.WA_PHONE_NUMBER_ID}', 'user_order', NULL, ${pedidoString})`;
+
+    recHit("fac_iterum", sqlFicha);
+
     const tiempo =
       argumentos.paymentMethod.toUpperCase() === "TARJETA" ? 50 : 30;
     //return "Pedido recibido, tardara " + tiempo + " minutos aproximadamente";

@@ -126,6 +126,7 @@ const getResponse = async (msg, num) => {
     switch (func.name) {
       case "addOrder":
         respuetaFuncion = functions.addOrder(func, num);
+        messages.deleteMessages(num);
         break;
       default:
         respuetaFuncion = "No se ha encontrado la funcion";
@@ -137,7 +138,6 @@ const getResponse = async (msg, num) => {
 
   // recoje la respuesta del gpt y la devuelve al usuario
   let response = chatCompletion.choices[0].message.content;
-  messages.deleteMessages(num);
   return `${response}`;
 };
 
