@@ -3,6 +3,8 @@ class Functions {
   numCount = 0;
   // funcion de añadir pedido
   addOrder(func, num) {
+    console.log("haciendo pedido");
+
     const date = new Date();
     const argumentos = JSON.parse(func.arguments);
     console.log(func.arguments);
