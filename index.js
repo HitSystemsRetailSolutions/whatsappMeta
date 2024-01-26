@@ -40,7 +40,7 @@ const getResponse = async (msg, num) => {
       new Date().toLocaleTimeString()
     );
 
-    console.log({ num: msg });
+    console.log({ [num]: msg });
 
     chatCompletion = await openai.chat.completions
       .create({
