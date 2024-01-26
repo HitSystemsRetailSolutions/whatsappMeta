@@ -149,28 +149,34 @@ async function handleNewMsg(msg) {
     .addMessage(msg.from, msg.text.body)
     .then(() => {
       // obtiene la respuesta del gpt
-      let mensaje = "";
       messages
         .getMessages(msg.from)
         .then((mensajes) => {
           getResponse(mensajes, msg.from)
             .then((respuesta) => {
-              mensaje = respuesta;
               // envia el mensaje
-              if (mensaje.includes("Confirmación de impresión del ticket")) {
+              if (respuesta.includes("Confirmación de impresión del ticket")) {
                 // Borra los mensajes una vez que el ticket ha sido impreso
-                messages.deleteMessages(msg.from);
+                messages.deleteMessages(msg.from).catch((e) => console.log(e));
               } else {
                 // Si no se ha impreso el ticket, añade la respuesta al registro
-                messages.addRespone(msg.from, mensaje);
+                messages
+                  .addRespone(msg.from, respuesta)
+                  .catch((e) =>
+                    console.log(
+                      "No se ha podido añadir la respuesta en la BBDD"
+                    )
+                  );
               }
               // envia el mensaje
-              bot.sendTextMessage(mensaje, msg.from);
+              bot
+                .sendTextMessage(respuesta, msg.from)
+                .catch((e) => console.log(e));
             })
             .catch((e) => {
               console.log(e);
-              mensaje = "error comunicando con el gpt";
-              bot.sendTextMessage(mensaje, msg.from);
+              respuesta = "error comunicando con el gpt";
+              bot.sendTextMessage(respuesta, msg.from);
             });
         })
         .catch((e) => {
