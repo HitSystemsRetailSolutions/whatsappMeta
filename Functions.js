@@ -68,7 +68,6 @@ class Functions {
     const tiempo =
       argumentos.paymentMethod.toUpperCase() === "TARJETA" ? 50 : 30;
     return "Pedido recibido, tardara " + tiempo + " minutos aproximadamente";
-    // return ticket;
   }
 }
 
