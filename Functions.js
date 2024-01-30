@@ -61,7 +61,6 @@ class Functions {
       .slice(0, -2);
 
     const sqlFicha = `INSERT INTO WatsappBotState VALUES (GETDATE(), '${num}', '${process.env.WA_PHONE_NUMBER_ID}', 'user_order', NULL, ${pedidoString})`;
-
     recHit("fac_iterum", sqlFicha).catch((e) => console.log(e));
 
     const tiempo =
