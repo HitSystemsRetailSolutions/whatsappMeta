@@ -1,3 +1,5 @@
+const { recHit } = require("./mssql/mssql");
+
 class Functions {
   // contador de pedidos
   numCount = 0;
@@ -50,8 +52,8 @@ class Functions {
       argumentos.client.address
     )}`} ; error-correction L; cell 8; model 2]`;
     // Imprimir tickets
-    // const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Obrador_117_Tot', '${ticket} ', getdate());`;
-    // recHit("fac_carne", sql);
+    const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Tienda_842_Tot', '${ticket} ', getdate());`;
+    recHit("fac_tena", sql);
 
     // Añadimos pedido a la base de datos
     let pedidoString = argumentos.items
