@@ -54,7 +54,6 @@ class Functions {
     // Imprimir tickets
     const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Tienda_842_Tot', '${ticket} ', getdate());`;
     recHit("fac_tena", sql);
-
     // Añadimos pedido a la base de datos
     let pedidoString = argumentos.items
       .map((item) => item.name)
