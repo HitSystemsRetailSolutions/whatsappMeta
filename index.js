@@ -11,20 +11,43 @@ const { functions } = require("./Functions.js");
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+function obtenerComponenteDireccion(resultado, tipo) {
+  // Buscar el componente de dirección por tipo
+  for (let i = 0; i < resultado.address_components.length; i++) {
+    let componente = resultado.address_components[i];
+    for (let j = 0; j < componente.types.length; j++) {
+      if (componente.types[j] === tipo) {
+        return componente.long_name;
+      }
+    }
+  }
+  return null;
+}
+
 const verificarDireccion = (direccion) => {
   return new Promise((resolve, reject) => {
-    googleMapsClient.geocode({ address: direccion }, (err, response) => {
-      if (!err) {
-        // Aquí puedes verificar si la respuesta contiene los datos de geolocalización
-        if (response.json.results.length > 0) {
-          resolve(true);
+    googleMapsClient.geocode(
+      { address: direccion },
+      function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          // Verificar si hay resultados
+          if (results[0]) {
+            // Obtener el código postal (si está disponible)
+            let codigoPostal = obtenerComponenteDireccion(
+              results[0],
+              "postal_code"
+            );
+            console.log("Código Postal:", codigoPostal);
+          } else {
+            console.error(
+              "No se encontraron resultados para la dirección proporcionada."
+            );
+          }
         } else {
-          resolve(false);
+          console.error("Error en la solicitud de geocodificación:", status);
         }
-      } else {
-        reject(err);
       }
-    });
+    );
   });
 };
 
@@ -157,7 +180,7 @@ async function handleNewMsg(msg) {
               // envia el mensaje
               if (respuesta.includes("Confirmación de impresión del ticket")) {
                 // Borra los mensajes una vez que el ticket ha sido impreso
-                messages.deleteMessages(msg.from).catch((e) => console.log(e));
+                messages.deleteMessages(msg.from).catch(console.log);
               } else {
                 // Si no se ha impreso el ticket, añade la respuesta al registro
                 messages
@@ -169,9 +192,7 @@ async function handleNewMsg(msg) {
                   );
               }
               // envia el mensaje
-              bot
-                .sendTextMessage(respuesta, msg.from)
-                .catch((e) => console.log(e));
+              bot.sendTextMessage(respuesta, msg.from).catch(console.log);
             })
             .catch((e) => {
               console.log(e);

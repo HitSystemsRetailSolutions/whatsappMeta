@@ -48,9 +48,7 @@ class Functions {
     ${num}
     ${argumentos.client.address}
     
-    [barcode: type qr; data ${`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-      argumentos.client.address
-    )}`} ; error-correction L; cell 8; model 2]`;
+    [barcode: type qr; data ${`https://www.youtube.com/watch?v=dQw4w9WgXcQ`} ; error-correction L; cell 8; model 2]`;
     // Imprimir tickets
     const sql = `INSERT INTO impresoraCola (id, Impresora, Texte, tmstpeticio) VALUES (newid(),'Tienda_842_Tot', '${ticket} ', getdate());`;
     recHit("fac_tena", sql);
